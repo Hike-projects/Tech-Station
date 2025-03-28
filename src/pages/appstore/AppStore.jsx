@@ -34,7 +34,7 @@ function AppStore() {
           <h3 className="app-name">{app.name}</h3>
           <p className="app-description">{app.description}</p>
           <a href={app.download_url} className="download-button" download>
-            Download
+            📥 Download
           </a>
         </div>
       </div>
