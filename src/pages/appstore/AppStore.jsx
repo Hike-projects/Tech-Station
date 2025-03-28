@@ -1,31 +1,31 @@
 import { useState, useEffect } from "react";
 import supabase from "../../supabaseClient";
-import "./AppStore.css"; // Newly designed CSS
+import NavBar from "../../components/NavBar/NavBar"; // Import NavBar Component
+import Footer from "../../components/Footer/Footer"; // Import Footer Component
+import "./AppStore.css"; // Import AppStore styles
 
 function AppStore() {
-  const [apps, setApps] = useState([]); // Store the list of apps
-  const [status, setStatus] = useState("loading"); // Loading, success, error
-  const [error, setError] = useState(null); // Error message if fetch fails
+  const [apps, setApps] = useState([]); // App data state
+  const [status, setStatus] = useState("loading"); // Loading, success, or error
+  const [error, setError] = useState(null); // For error handling
 
-  // Fetch app data from Supabase
+  // Fetch App Data from Supabase
   useEffect(() => {
     async function fetchApps() {
       setStatus("loading");
-
       const { data, error } = await supabase.from("apps").select("*");
-
       if (error) {
         setError(`Error fetching apps: ${error.message}`);
         setStatus("error");
       } else {
-        setApps(data); // Update state with fetched apps
+        setApps(data);
         setStatus("success");
       }
     }
     fetchApps();
   }, []);
 
-  // Render function for app cards
+  // Renders App Cards
   const renderApps = () =>
     apps.map((app) => (
       <div key={app.id} className="app-card">
@@ -40,20 +40,21 @@ function AppStore() {
       </div>
     ));
 
-  // Conditional rendering based on API status
   return (
-    <div className="app-store">
-      <h1 className="app-store-title">App Store</h1>
+    <div className="app-container">
+      {/* Include Navigation Bar */}
+      <NavBar />
 
-      {status === "loading" && <p className="loading-message">Loading apps...</p>}
+      {/* App Store Main Content */}
+      <div className="app-store">
+        <h1 className="app-store-title">App Store</h1>
+        {status === "loading" && <p className="loading-message">Loading apps...</p>}
+        {status === "error" && <p className="error-message">{error}</p>}
+        {status === "success" && <div className="app-grid">{renderApps()}</div>}
+      </div>
 
-      {status === "error" && <p className="error-message">{error}</p>}
-
-      {status === "success" && (
-        <div className="app-grid">
-          {renderApps()} {/* Render apps once data is fetched */}
-        </div>
-      )}
+      {/* Include Footer */}
+      <Footer />
     </div>
   );
 }
