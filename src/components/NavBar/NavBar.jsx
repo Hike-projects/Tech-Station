@@ -1,28 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
 
 function NavBar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
           AppStore
         </Link>
-        <ul className="navbar-links">
+
+        {/* Hamburger Menu */}
+        <div className="hamburger" onClick={toggleMenu}>
+          ☰
+        </div>
+
+        {/* Navigation Links */}
+        <ul className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
           <li>
             <Link to="/" className="navbar-link">
-              Home
+              🏠 {/* Home icon */}
             </Link>
           </li>
           <li>
             <Link to="/about" className="navbar-link">
-              About
+              ℹ️ {/* About icon */}
             </Link>
           </li>
           <li>
             <Link to="/appstore" className="navbar-link">
-              App Store
+              📦 {/* App Store icon */}
             </Link>
           </li>
         </ul>
