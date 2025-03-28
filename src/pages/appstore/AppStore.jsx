@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import supabase from "../../supabaseClient";
-
-import "./AppStore.css"; // Create styles for the app store layout
+import "./AppStore.css"; // Newly designed CSS
 
 function AppStore() {
-  const [apps, setApps] = useState([]);    // Store the list of apps
-  const [status, setStatus] = useState(""); // Status for loading, error
-  const [error, setError] = useState(null); // Error message if needed
+  const [apps, setApps] = useState([]); // Store the list of apps
+  const [status, setStatus] = useState("loading"); // Loading, success, error
+  const [error, setError] = useState(null); // Error message if fetch fails
 
   // Fetch app data from Supabase
   useEffect(() => {
     async function fetchApps() {
       setStatus("loading");
+
       const { data, error } = await supabase.from("apps").select("*");
 
       if (error) {
@@ -22,31 +22,36 @@ function AppStore() {
         setStatus("success");
       }
     }
-
     fetchApps();
   }, []);
 
-  // Render function for each app
+  // Render function for app cards
   const renderApps = () =>
     apps.map((app) => (
       <div key={app.id} className="app-card">
         <img src={app.icon_url} alt={`${app.name} Icon`} className="app-icon" />
-        <h3 className="app-name">{app.name}</h3>
-        <p className="app-description">{app.description}</p>
-        <a href={app.download_url} className="download-button" download>
-          Download
-        </a>
+        <div className="app-info">
+          <h3 className="app-name">{app.name}</h3>
+          <p className="app-description">{app.description}</p>
+          <a href={app.download_url} className="download-button" download>
+            Download
+          </a>
+        </div>
       </div>
     ));
 
+  // Conditional rendering based on API status
   return (
     <div className="app-store">
-      <h1>App Store</h1>
-      {status === "loading" && <p>Loading apps...</p>}
-      {status === "error" && <p style={{ color: "red" }}>{error}</p>}
+      <h1 className="app-store-title">App Store</h1>
+
+      {status === "loading" && <p className="loading-message">Loading apps...</p>}
+
+      {status === "error" && <p className="error-message">{error}</p>}
+
       {status === "success" && (
         <div className="app-grid">
-          {renderApps()} {/* Render apps from state */}
+          {renderApps()} {/* Render apps once data is fetched */}
         </div>
       )}
     </div>
