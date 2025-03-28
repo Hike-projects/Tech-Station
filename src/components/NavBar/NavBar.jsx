@@ -16,7 +16,9 @@ function NavBar() {
             </Link>
           </li>
           <li>
-            <Link to="/about" className="navbar-link">About</Link>
+            <Link to="/about" className="navbar-link">
+              About
+            </Link>
           </li>
           <li>
             <Link to="/appstore" className="navbar-link">
