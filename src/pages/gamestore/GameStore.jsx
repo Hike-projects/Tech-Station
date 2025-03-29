@@ -89,7 +89,6 @@ function GameStore() {
   return (
     <div className="game-container">
       <div className="game-store">
-        <h1 className="game-store-title">Game Store</h1>
         {status === "loading" && <p className="loading-message">Loading games...</p>}
         {status === "error" && <p className="error-message">{error}</p>}
         {status === "success" && <div className="game-grid">{renderGames()}</div>}
