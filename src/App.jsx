@@ -1,13 +1,15 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AppStore from "./pages/appstore/AppStore"; // Import AppStore component
+import Home from "./pages/home/Home";
+import AppStore from "./pages/appstore/AppStore";
+import GameStore from "./pages/gamestore/GameStore";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Main Homepage (App Store) */}
-        <Route path="/" element={<AppStore />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/apps" element={<AppStore />} />
+        <Route path="/games" element={<GameStore />} />
       </Routes>
     </Router>
   );

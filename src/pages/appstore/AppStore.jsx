@@ -1,22 +1,16 @@
 import { useState, useEffect } from "react";
 import supabase from "../../supabaseClient";
-
-import NavBar from "../../components/NavBar/NavBar";
-import Footer from "../../components/Footer/Footer";
-
 import "./AppStore.css";
 
 function AppStore() {
-  const [apps, setApps] = useState([]); // App data state
-  const [status, setStatus] = useState("loading"); // Track loading, success, or error states
-  const [error, setError] = useState(null); // Handle errors
+  const [apps, setApps] = useState([]);
+  const [status, setStatus] = useState("loading");
+  const [error, setError] = useState(null);
 
-  // Fetch App Data from Supabase
   useEffect(() => {
     async function fetchApps() {
       try {
         setStatus("loading");
-
         const { data, error } = await supabase.from("apps").select("*");
 
         if (error) {
@@ -37,12 +31,10 @@ function AppStore() {
     fetchApps();
   }, []);
 
-  // Function to handle download clicks and update download counts
   const handleDownload = async (appId, downloadUrl) => {
     try {
       console.log("Attempting to update downloads for app ID:", appId);
 
-      // Fetch the current download count
       const { data, error: fetchError } = await supabase
         .from("apps")
         .select("downloads")
@@ -52,13 +44,11 @@ function AppStore() {
       if (fetchError) {
         console.error("Error fetching current downloads:", fetchError);
         alert("Error fetching app downloads. Please try again later.");
-        return; // Stop further execution
+        return;
       }
 
-      const currentDownloads = data.downloads || 0;
-      const updatedDownloads = currentDownloads + 1;
+      const updatedDownloads = (data.downloads || 0) + 1;
 
-      // Update the downloads column
       const { error: updateError } = await supabase
         .from("apps")
         .update({ downloads: updatedDownloads })
@@ -67,13 +57,9 @@ function AppStore() {
       if (updateError) {
         console.error("Error updating downloads:", updateError);
         alert("Error updating the download count. Please try again later.");
-        return; // Stop further execution
-      } else {
-        console.log(`Successfully updated downloads for app ID ${appId}`);
+        return;
       }
 
-      // Redirect to the download link
-      console.log("Redirecting to URL:", downloadUrl);
       window.location.href = downloadUrl;
     } catch (err) {
       console.error("Unexpected error handling download:", err);
@@ -81,25 +67,19 @@ function AppStore() {
     }
   };
 
-  // Function to render each app’s card
   const renderApps = () =>
     apps.map((app) => (
       <div key={app.id} className="app-card">
-        {/* App Icon */}
         <img src={app.icon_url} alt={`${app.name} Icon`} className="app-icon" />
-
-        {/* App Info */}
         <div className="app-info">
           <h3 className="app-name">{app.name}</h3>
           <p className="app-description">{app.description}</p>
-
-          {/* Download Button with Count */}
           <div className="download-section">
             <button
               className="download-button"
-              onClick={() => handleDownload(app.id, app.download_url)} // Call handleDownload directly
+              onClick={() => handleDownload(app.id, app.download_url)}
             >
-              📥 Download ({app.downloads || 0}) {/* Default to 0 if null */}
+              📥 Download ({app.downloads || 0})
             </button>
           </div>
         </div>
@@ -108,25 +88,13 @@ function AppStore() {
 
   return (
     <div className="app-container">
-      {/* Include Navigation Bar */}
-      <NavBar />
-
-      {/* App Store Main Content */}
       <div className="app-store">
         <h1 className="app-store-title">App Store</h1>
 
-        {/* Loading State */}
         {status === "loading" && <p className="loading-message">Loading apps...</p>}
-
-        {/* Error State */}
         {status === "error" && <p className="error-message">{error}</p>}
-
-        {/* Success State */}
         {status === "success" && <div className="app-grid">{renderApps()}</div>}
       </div>
-
-      {/* Include Footer */}
-      <Footer />
     </div>
   );
 }
