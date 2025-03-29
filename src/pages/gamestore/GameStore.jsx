@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import supabase from "../../supabaseClient";
-import NavBar from "../../components/NavBar/NavBar";
-import Footer from "../../components/Footer/Footer";
 import "./GameStore.css";
 
 function GameStore() {
@@ -90,14 +88,12 @@ function GameStore() {
 
   return (
     <div className="game-container">
-      <NavBar />
       <div className="game-store">
         <h1 className="game-store-title">Game Store</h1>
         {status === "loading" && <p className="loading-message">Loading games...</p>}
         {status === "error" && <p className="error-message">{error}</p>}
         {status === "success" && <div className="game-grid">{renderGames()}</div>}
       </div>
-      <Footer />
     </div>
   );
 }

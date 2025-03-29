@@ -89,8 +89,6 @@ function AppStore() {
   return (
     <div className="app-container">
       <div className="app-store">
-        <h1 className="app-store-title">App Store</h1>
-
         {status === "loading" && <p className="loading-message">Loading apps...</p>}
         {status === "error" && <p className="error-message">{error}</p>}
         {status === "success" && <div className="app-grid">{renderApps()}</div>}
