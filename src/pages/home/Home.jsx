@@ -4,6 +4,7 @@ import Footer from "../../components/Footer/Footer";
 import AppStore from "../appstore/AppStore";
 import GameStore from "../gamestore/GameStore";
 import "./Home.css";
+import SearchBar from "../../components/SearchBar/SearchBar";
 
 const Home = () => {
   const [activeCategory, setActiveCategory] = useState("apps");

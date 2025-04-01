@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import supabase from "../../supabaseClient";
+import SearchBar from "../../components/SearchBar/SearchBar";
 import "./GameStore.css";
 
 function GameStore() {
   const [games, setGames] = useState([]);
+  const [filteredGames, setFilteredGames] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
 
@@ -19,6 +21,7 @@ function GameStore() {
           setStatus("error");
         } else {
           setGames(data);
+          setFilteredGames(data); // Initialize filtered games with all games
           setStatus("success");
         }
       } catch (err) {
@@ -31,10 +34,19 @@ function GameStore() {
     fetchGames();
   }, []);
 
+  const handleSearch = (query) => {
+    const filtered = games.filter(
+      (game) =>
+        game.name.toLowerCase().includes(query.toLowerCase()) ||
+        game.description.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredGames(filtered);
+  };
+
   const handleDownload = async (gameId, downloadUrl) => {
     try {
       console.log("Updating downloads for game ID:", gameId);
-      
+
       const { data, error: fetchError } = await supabase
         .from("games")
         .select("downloads")
@@ -68,7 +80,7 @@ function GameStore() {
   };
 
   const renderGames = () =>
-    games.map((game) => (
+    filteredGames.map((game) => (
       <div key={game.id} className="game-card">
         <img src={game.icon_url} alt={`${game.name} Icon`} className="game-icon" />
         <div className="game-info">
@@ -89,9 +101,19 @@ function GameStore() {
   return (
     <div className="game-container">
       <div className="game-store">
+        {/* Use the SearchBar component */}
+        <SearchBar onSearch={handleSearch} />
         {status === "loading" && <p className="loading-message">Loading games...</p>}
         {status === "error" && <p className="error-message">{error}</p>}
-        {status === "success" && <div className="game-grid">{renderGames()}</div>}
+        {status === "success" && (
+          <div className="game-grid">
+            {filteredGames.length > 0 ? (
+              renderGames()
+            ) : (
+              <p className="no-results">No games found.</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

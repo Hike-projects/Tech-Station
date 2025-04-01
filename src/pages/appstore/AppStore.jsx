@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import supabase from "../../supabaseClient";
+import SearchBar from "../../components/SearchBar/SearchBar";
 import "./AppStore.css";
 
 function AppStore() {
   const [apps, setApps] = useState([]);
+  const [filteredApps, setFilteredApps] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
 
@@ -19,6 +21,7 @@ function AppStore() {
           setStatus("error");
         } else {
           setApps(data);
+          setFilteredApps(data); // Initialize filtered apps with all apps
           setStatus("success");
         }
       } catch (err) {
@@ -30,6 +33,15 @@ function AppStore() {
 
     fetchApps();
   }, []);
+
+  const handleSearch = (query) => {
+    const filtered = apps.filter(
+      (app) =>
+        app.name.toLowerCase().includes(query.toLowerCase()) ||
+        app.description.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredApps(filtered);
+  };
 
   const handleDownload = async (appId, downloadUrl) => {
     try {
@@ -68,7 +80,7 @@ function AppStore() {
   };
 
   const renderApps = () =>
-    apps.map((app) => (
+    filteredApps.map((app) => (
       <div key={app.id} className="app-card">
         <img src={app.icon_url} alt={`${app.name} Icon`} className="app-icon" />
         <div className="app-info">
@@ -89,9 +101,19 @@ function AppStore() {
   return (
     <div className="app-container">
       <div className="app-store">
+        {/* Use the SearchBar component */}
+        <SearchBar onSearch={handleSearch} />
         {status === "loading" && <p className="loading-message">Loading apps...</p>}
         {status === "error" && <p className="error-message">{error}</p>}
-        {status === "success" && <div className="app-grid">{renderApps()}</div>}
+        {status === "success" && (
+          <div className="app-grid">
+            {filteredApps.length > 0 ? (
+              renderApps()
+            ) : (
+              <p className="no-results">No apps found.</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
